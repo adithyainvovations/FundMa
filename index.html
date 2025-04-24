@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Class Fund Collection</title>
+  <title>FundMate - Class Fund Collection</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     * {
@@ -56,7 +56,6 @@
       border: none;
       border-radius: 8px;
       width: 90%;
-      max-width: 100%;
       margin: 10px auto;
       font-size: 16px;
       cursor: pointer;
@@ -98,6 +97,7 @@
     th {
       background: #25d366;
       color: white;
+      font-weight: bold;
     }
 
     .status-box {
@@ -143,7 +143,7 @@
 <body>
   <div id="home">
     <div class="container">
-      <div class="fundmate">FundMate</div> <!-- Added FundMate text -->
+      <div class="fundmate">FundMate</div>
       <h1>Welcome Everyone</h1>
       <button class="button" onclick="showLogin()">Admin Login</button>
       <button class="button" onclick="showUser()">User View</button>
@@ -188,7 +188,6 @@
   <div id="user-panel" class="hidden">
     <div class="container">
       <h2>Student Payment Status</h2>
-      <!-- Moved the summary to the top here -->
       <div class="summary">
         <p><strong>Total:</strong> ₹<span id="user-total-amount">0</span></p>
         <p><strong>Received:</strong> ₹<span id="user-received-amount">0</span></p>
@@ -202,8 +201,6 @@
       </thead>
       <tbody id="user-student-list"></tbody>
     </table>
-
-    <!-- Back button placed below the table -->
     <button class="button back-btn" onclick="goHome()">Back</button>
   </div>
 
@@ -315,8 +312,9 @@
 
     function exportToExcel() {
       let students = JSON.parse(localStorage.getItem("students")) || [];
-      let worksheet = XLSX.utils.json_to_sheet(students);
-      let workbook = XLSX.utils.book_new();
+      const data = [["Name", "Amount", "Status"], ...students.map(s => [s.name, s.amount, s.paid ? "Paid" : "Pending"])];
+      const worksheet = XLSX.utils.aoa_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
       XLSX.writeFile(workbook, "student_fund_data.xlsx");
     }
